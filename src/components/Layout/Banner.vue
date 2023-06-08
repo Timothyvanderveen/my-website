@@ -1,23 +1,22 @@
 <template>
   <div class="layout__banner">
     <a
-      href="https://unsplash.com/photos/splf2zjnnX0"
+      :href="bannerItem.creditSrc"
       class="layout__banner--credit"
+      target="_blank"
     >
-      Ričards Zvagulis
+      {{ bannerItem.creditName }}
     </a>
-    <img
-      v-if="isPath('/')"
-      class="layout__banner--image"
-      alt="Home"
-      src="@/assets/img/main-banner-ricards-zvagulis--unsplash.jpg"
-    />
-    <img
-      v-if="isPath('/resume')"
-      class="layout__banner--image"
-      alt="Home"
-      src="@/assets/img/resume-banner.jpg"
-    />
+    {{ currentPath }}
+    <transition name="fade" mode="in-out">
+      <img
+        :key="activeItemId"
+        class="layout__banner--image"
+        :alt="bannerItem.alt"
+        :src="bannerItem.src"
+        :style="bannerItem.style"
+      />
+    </transition>
     <div class="layout__banner--gradient" />
   </div>
 </template>
@@ -25,13 +24,58 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
+interface BannerItem {
+  url: string;
+  src: string;
+  alt: string;
+  creditName: string;
+  creditSrc: string;
+  style: string | null;
+}
+
 export default defineComponent({
   name: "LayoutBanner",
+  data: () => ({
+    currentPath: location.pathname,
+    activeItemId: 0,
+  }),
+  watch: {
+    $route(to) {
+      window.scrollTo(0, 0);
+      this.currentPath = to.path;
+    },
+  },
+  computed: {
+    bannerItem() {
+      const bannerItems = [
+        {
+          url: "/",
+          src: "https://images.unsplash.com/photo-1631602152241-f3f4c76c4958?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3154&q=80",
+          alt: "home",
+          creditName: "Ričards Zvagulis",
+          creditSrc: "https://unsplash.com/@richards36",
+          style: null,
+        },
+        {
+          url: "/who-am-i",
+          src: "https://images.pexels.com/photos/248280/pexels-photo-248280.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+          alt: "whoami",
+          creditName: "Pixabay",
+          creditSrc: "https://www.pexels.com/@pixabay/",
+          style: "top: -70px;",
+        },
+      ] as BannerItem[];
 
-  // TODO placeholder
-  methods: {
-    isPath(pathname: string) {
-      return location.pathname === pathname;
+      return (
+        bannerItems.find((f, index) => {
+          if (f.url === this.currentPath) {
+            this.activeItemId = index;
+            return true;
+          }
+
+          return false;
+        }) ?? bannerItems[0]
+      );
     },
   },
 });
@@ -41,9 +85,8 @@ export default defineComponent({
 .layout__banner {
   height: $banner-size;
   overflow: hidden;
-  // position: fixed;
   inset: 0;
-  // margin-top: 400px;
+
   .layout__banner--gradient {
     @include fillWH;
     background-size: cover;
@@ -73,3 +116,5 @@ export default defineComponent({
   }
 }
 </style>
+
+<style></style>

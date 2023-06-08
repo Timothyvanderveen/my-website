@@ -16,15 +16,19 @@
   /> -->
 
   <div class="content" ref="content">
-    <div class="content__bar" ref="contentBarLeft">
-      <KeepAlive>
-        <LayoutNavbar />
-      </KeepAlive>
+    <div class="content__bar left" ref="contentBarLeft">
+      <LayoutNavbar />
     </div>
-    <div class="content__view" ref="contentView">
-      <router-view />
-    </div>
-    <div class="content__bar" ref="contentBarRight" />
+
+    <KeepAlive>
+      <transition name="fade" mode="out-in">
+        <div class="content__view" ref="contentView" :key="currentPath">
+          <router-view />
+        </div>
+      </transition>
+    </KeepAlive>
+
+    <div class="content__bar right" ref="contentBarRight" />
   </div>
 </template>
 
@@ -39,60 +43,75 @@ export default defineComponent({
     LayoutBanner,
     LayoutNavbar,
   },
-  methods: {},
+  data: () => ({
+    currentPath: location.pathname,
+  }),
+  watch: {
+    $route(to) {
+      window.scrollTo(0, 0);
+      this.currentPath = to.path;
+    },
+  },
+  beforeUpdate() {
+    this.setContentBars();
+  },
   mounted() {
-    // TODO destructure into functions
-    // TODO run once on mounted to initiate
-    document.onscroll = (e) => {
+    document.onscroll = () => this.setContentBars();
+  },
+  methods: {
+    setContentBars() {
       const contentBars = [
         this.$refs["contentBarLeft"],
-        // this.$refs["contentBarRight"],
-      ] as HTMLDivElement[];
+        this.$refs["contentBarRight"],
+      ] as HTMLElement[];
 
-      contentBars.forEach((contentBar: HTMLDivElement) => {
-        const boundingRect = contentBar.getBoundingClientRect();
-        const elementHeight = contentBar.offsetHeight;
-        const centerOfElement = boundingRect.top + elementHeight / 2; // half size of element + pixels from top
-        const centerOfScreen = window.innerHeight / 2; // total pixels of screen divided in half
-        const isPositionFixed = contentBar.style.position === "fixed";
-
-        if (centerOfElement <= centerOfScreen && !isPositionFixed) {
-          contentBar.style.position = "fixed";
-          contentBar.style.top =
-            centerOfScreen - contentBar.offsetHeight / 2 + "px";
-        }
-
-        if (boundingRect.top + window.scrollY <= 450 && isPositionFixed) {
-          contentBar.style.position = "absolute";
-          contentBar.style.top = "50px";
+      contentBars.forEach((contentBar: HTMLElement) => {
+        const bannerHeight = 400;
+        const { scrollY } = window;
+        const newHeightOffset = bannerHeight - scrollY;
+        if (newHeightOffset >= 0) {
+          contentBar.style.height = `calc(100vh - ${newHeightOffset}px)`;
         }
       });
-    };
+    },
   },
 });
 </script>
 
 <style lang="scss">
-@import "./assets/css/_global.scss";
-
 .content {
   display: flex;
   width: 100%;
   height: 100%;
   position: relative;
   background-color: $white;
-  padding: 50px 0 0;
+  min-height: calc(100vh + 400px);
 }
 
 .content__bar {
   width: $content-bar-width;
-  height: fit-content;
   position: absolute;
-  top: 50px;
+  position: fixed;
+  height: calc(100vh - $banner-size);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  bottom: 0;
+
+  &.left {
+    left: 0;
+  }
+
+  &.right {
+    right: 0;
+  }
 }
 
 .content__view {
-  margin: 0 $content-bar-width;
+  margin: 10vh 20% 0 30%;
   width: 100%;
+  font-family: PoiretOne;
+  font-weight: 600;
+  text-align: right;
 }
 </style>

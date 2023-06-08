@@ -6,6 +6,8 @@ $banner-size: 400px;
 $content-bar-width: 20%;
 
 html {
+  scroll-behavior: smooth;
+
   background: #f5f5f5;
 
   ::-webkit-scrollbar {
@@ -23,6 +25,16 @@ html {
 
   p {
     margin: 0;
+    font-size: 20px;
+  }
+
+  h1 {
+    font-family: "MajorMono";
+    font-size: 40px;
+    white-space: nowrap;
+    margin: 0;
+    font-weight: 600;
+    max-height: 40px;
   }
 
   :focus-visible {
@@ -31,10 +43,12 @@ html {
 }
 
 body {
+  cursor: url("~@/assets/img/cursor.png"), auto;
   margin: 0;
 
   #app {
-    font-family: "Jost";
+    font-family: "PoiretOne";
+
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -45,4 +59,14 @@ body {
     display: flex;
     flex-direction: column;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }

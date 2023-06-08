@@ -3,65 +3,97 @@
     <router-link
       class="navbar__item"
       :class="{
-        active: isActive(navbarItem.url),
-        hidden: isActive(navbarItem.url) && ![index, -1].includes(currentHover),
+        active: navbarItem.active,
+        hidden: navbarItem.active && ![index, -1].includes(currentHover),
         hover: currentHover === index,
       }"
       v-for="(navbarItem, index) in navbarItems"
       :key="index"
       @mouseleave="unhover()"
-      @mouseover="hover($event, index)"
-      @click="$forceUpdate()"
+      @mouseenter="hover($event, index)"
       :to="navbarItem.url"
     >
-      <div class="navbar__item--link">
+      <GlitchedText
+        class="navbar__item--link"
+        :text="navbarItem.label"
+        :hover="true"
+      />
+      <!-- <div class="navbar__item--link">
         {{ navbarItem.label }}
-      </div>
-      <p class="navbar__item--active">{{ navbarItem.suffix ?? "." }}</p>
+      </div> -->
+
+      <!-- <GlitchedText
+        class="navbar__item--active"
+        :text="navbarItem.suffix ?? '.'"
+      /> -->
+      <h1 class="navbar__item--active">
+        {{ navbarItem.suffix ?? "." }}
+      </h1>
     </router-link>
   </div>
 </template>
 
 <script lang="ts">
+import GlitchedText from "@/components/GlitchedText.vue";
 import { defineComponent } from "vue";
 
 interface NavbarItem {
   url: string;
   label: string;
   suffix: string | null;
-  suffixWidth: string | null;
+  active: boolean;
+  hover: boolean;
 }
 
 export default defineComponent({
   name: "LayoutNavbar",
+  components: { GlitchedText },
   data: () => ({
+    currentPath: location.pathname,
     currentHover: -1,
-    navbarItems: [
-      {
-        url: "/",
-        label: "home",
-      },
-      {
-        url: "/who-am-i",
-        label: "who am i",
-        suffix: "?",
-      },
-    ] as NavbarItem[],
   }),
+  // TODO move to store
+  watch: {
+    $route(to) {
+      window.scrollTo(0, 0);
+      this.currentPath = to.path;
+    },
+  },
+  computed: {
+    navbarItems() {
+      const navbarItems = [
+        {
+          url: "/",
+          label: "home",
+          active: false,
+          hover: false,
+        },
+        {
+          url: "/who-am-i",
+          label: "who am i",
+          suffix: "?",
+          active: false,
+          hover: false,
+        },
+      ] as NavbarItem[];
+
+      return navbarItems.map((m: NavbarItem, index) => {
+        m.active = m.url === this.currentPath;
+        m.hover = index === this.currentHover;
+        return m;
+      });
+    },
+  },
   mounted() {
     this.unhover();
   },
   methods: {
     getActive(): NavbarItem | null {
-      return this.navbarItems.find((f) => this.isActive(f.url)) ?? null;
-    },
-    isActive(url: string) {
-      return window.location.pathname === url;
+      return this.navbarItems.find((f) => f.active) ?? null;
     },
     hover(event: MouseEvent, index: number) {
       this.currentHover = index;
       this.unhoverAll();
-
       const element = (event.target as HTMLElement).firstElementChild;
       if (element) {
         this.setSuffix(element as HTMLElement, this.navbarItems[index].suffix);
@@ -70,11 +102,15 @@ export default defineComponent({
     unhover() {
       this.currentHover = -1;
       this.unhoverAll();
-
+      this.setActive();
+    },
+    setActive() {
       const element = document.querySelector(
         ".navbar__item.active .navbar__item--link"
       );
-      this.setSuffix(element as HTMLElement, this.getActive()?.suffix);
+      if (element) {
+        this.setSuffix(element as HTMLElement, this.getActive()?.suffix);
+      }
     },
     unhoverAll() {
       const elements = Array.from(
@@ -86,8 +122,8 @@ export default defineComponent({
       });
     },
     setSuffix(element: HTMLElement, suffix: string | null = ".") {
-      const width = suffix === "?" ? "24" : "13";
-      element.style.transform = `translate(-${width}px, 0)`;
+      // const width = suffix === "?" ? "29" : "10";
+      element.style.transform = `translate(-${29}px, 0)`;
     },
   },
 });
@@ -98,14 +134,14 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  top: 50%;
+  /* position: absolute; */
   // gap: 1em;
 
   .navbar__item {
     text-transform: lowercase;
     translate: 0em;
     cursor: pointer;
-    font-size: 40px;
-    font-weight: 600;
 
     .navbar__item--active {
       opacity: 0;
@@ -115,7 +151,6 @@ export default defineComponent({
       right: 0;
       z-index: 0;
       color: black;
-      pointer-events: none;
       transition: opacity 0.2s ease-in-out;
     }
 
@@ -124,7 +159,7 @@ export default defineComponent({
       transition: transform 0.2s ease-in-out;
       z-index: 1;
       position: relative;
-      pointer-events: none;
+      max-height: 40px;
     }
 
     &.hidden {
