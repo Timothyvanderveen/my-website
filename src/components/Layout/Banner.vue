@@ -1,13 +1,13 @@
 <template>
   <div class="layout__banner">
-    <a
-      :href="bannerItem.creditSrc"
-      class="layout__banner--credit"
-      target="_blank"
-    >
-      {{ bannerItem.creditName }}
+    <a target="_blank" :href="bannerItem.creditSrc">
+      <GlitchedText
+        class="layout__banner--credit clickable"
+        :text="bannerItem.creditName"
+        :hover="true"
+      />
     </a>
-    {{ currentPath }}
+
     <transition name="fade" mode="in-out">
       <img
         :key="activeItemId"
@@ -17,12 +17,24 @@
         :style="bannerItem.style"
       />
     </transition>
-    <div class="layout__banner--gradient" />
+
+    <GlitchedText
+      text="timothy"
+      class="layout__banner--firstname"
+      :hover="true"
+    />
+    <GlitchedText
+      text="van der veen"
+      class="layout__banner--surname"
+      id="layout__banner--surname"
+      :hover="true"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import GlitchedText from "@/components/GlitchedText.vue";
 
 interface BannerItem {
   url: string;
@@ -35,13 +47,13 @@ interface BannerItem {
 
 export default defineComponent({
   name: "LayoutBanner",
+  components: { GlitchedText },
   data: () => ({
     currentPath: location.pathname,
     activeItemId: 0,
   }),
   watch: {
     $route(to) {
-      window.scrollTo(0, 0);
       this.currentPath = to.path;
     },
   },
@@ -84,8 +96,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 .layout__banner {
   height: $banner-size;
-  overflow: hidden;
   inset: 0;
+  position: relative;
 
   .layout__banner--gradient {
     @include fillWH;
@@ -96,9 +108,10 @@ export default defineComponent({
   .layout__banner--image {
     width: 100%;
     position: fixed;
+    object-fit: cover;
     inset: 0;
+    height: 50vh;
     filter: grayscale(60%);
-    translate: 0 -15%;
   }
 
   .layout__banner--credit {
@@ -111,9 +124,43 @@ export default defineComponent({
     top: 0;
     right: 0;
     font-size: 10px;
-    color: rgb(0 0 0 / 30%);
-    margin: 1em;
+    opacity: 0.3;
+    color: rgb(0 0 0%);
+    padding: 1em;
+    transition: all 0.3s;
+    transform-origin: top right;
+
+    &:hover {
+      opacity: 1;
+      scale: 1.3;
+    }
   }
+}
+.layout__banner--firstname,
+.layout__banner--surname {
+  line-height: 33px;
+  height: 38px;
+  font-size: 50px;
+  max-height: unset;
+  overflow: hidden;
+}
+
+.layout__banner--firstname {
+  position: fixed;
+  color: #f5f5f5;
+  translate: 0 calc(-100% + 1px);
+  top: $banner-size;
+  right: -3px;
+  bottom: -1px;
+}
+.layout__banner--surname {
+  bottom: 1px;
+  position: absolute;
+  color: black;
+  translate: 0 100%;
+  z-index: 100;
+  right: 0;
+  width: 440.5px;
 }
 </style>
 

@@ -1,7 +1,7 @@
 <template>
-  <h1 class="glitched-text__wrapper" @mouseenter="goHover()">
-    {{ shownText }}
-  </h1>
+  <div class="glitched-text__wrapper" :class="{ glitched: jumbled }">
+    {{ jumbledText ?? text }}
+  </div>
 </template>
 
 <script lang="ts">
@@ -11,9 +11,12 @@ export default defineComponent({
   name: "GlitchedText",
   data: () => ({
     glitchedCharacters: "`¡™£¢∞§¶•ªº–≠åß∂ƒ©˙∆˚¬…æ≈ç√∫˜µ≤≥÷/?░▒▓<>/".split(""),
-    jumbledText: null as null | string,
+    jumbledText: "" as string,
     jumbled: false as boolean,
     interval: null as null | number,
+    isHovering: false,
+    textBefore: "",
+    deltaTimeout: 0,
   }),
   props: {
     text: {
@@ -26,67 +29,86 @@ export default defineComponent({
       default: false,
     },
   },
-  computed: {
-    shownText() {
-      return this.jumbledText ?? this.text;
-    },
-  },
   mounted() {
+    // this.textBefore = this.text;
+    this.jumbledText = this.text;
     this.jumble();
-    setTimeout(() => {
-      // Array.from(Array(Math.ceil(this.text.length / 10))).forEach(() => {
-      this.unjumble();
-      // });
-    }, 200);
+
+    // setTimeout(() => {
+    //   this.unjumble();
+    // }, 250 / this.text.length);
+  },
+  watch: {
+    text() {
+      this.jumble();
+    },
   },
   methods: {
-    goHover() {
-      if (this.hover) {
-        this.click();
-      }
-    },
-    click() {
-      this.jumble();
-      this.unjumble();
-    },
     jumble() {
-      const unusedIndices = Array.from(this.text.split("").keys());
-      this.jumbledText = this.text;
+      const unusedIndices = Array.from(this.jumbledText.split("").keys());
+      let deltaIndex = this.text.length - this.jumbledText.length;
 
-      this.text.split("").forEach((letter, letterIndex) => {
+      if (deltaIndex !== 0) {
+        if (deltaIndex < 0) {
+          this.jumbledText = this.jumbledText.slice(0, -1);
+        }
+        if (deltaIndex > 0) {
+          this.jumbledText = this.replaceText(
+            this.jumbledText,
+            this.getRandomGlitchedChar(this.jumbledText),
+            this.jumbledText.length + deltaIndex
+          );
+        }
+
+        clearTimeout(this.deltaTimeout);
+        this.deltaTimeout = setTimeout(() => this.jumble(), 20);
+        return;
+      }
+
+      clearTimeout(this.deltaTimeout);
+
+      this.jumbledText.split("").forEach(() => {
         const newIndex = this.getIndicesIndex(unusedIndices);
-        if (!this.jumbledText || this.jumbledText[newIndex] === "") return;
-
         this.jumbledText = this.replaceText(
           this.jumbledText,
           this.getRandomGlitchedChar(this.jumbledText),
           newIndex
         );
-        this.jumbled = true;
       });
+
+      setTimeout(() => {
+        this.unjumble();
+      }, 200);
+
+      this.jumbled = true;
     },
     unjumble() {
-      const unusedIndices = Array.from(this.text.split("").keys());
+      const unusedIndices = Array.from(this.jumbledText.split("").keys());
       const interval = setInterval(() => {
         if (unusedIndices.length !== 0) {
-          if (!this.jumbledText) return;
           const newIndex = this.getIndicesIndex(unusedIndices);
           this.jumbledText = this.replaceText(
             this.jumbledText,
-            this.text[newIndex],
+            this.text[newIndex] ?? "",
             newIndex
           );
         } else {
           if (interval) {
             clearInterval(interval);
-            this.jumbled = false;
+            setTimeout(() => {
+              this.jumbled = false;
+            }, 200);
             return;
           }
         }
       }, 250 / this.text.length);
     },
     replaceText(text: string, newChar: string, index: number) {
-      return text.substring(0, index) + newChar + text.substring(index + 1);
+      return (
+        (text.substring(0, index) ?? "") +
+        newChar +
+        (text.substring(index + 1) ?? "")
+      );
     },
     getRandomGlitchedChar(text: string) {
       let randomIndex;
@@ -95,7 +117,6 @@ export default defineComponent({
       randomIndex = Math.floor(Math.random() * this.glitchedCharacters.length);
       glitchedChar = this.glitchedCharacters[randomIndex];
       // } while (text.includes(glitchedChar));
-
       return glitchedChar;
     },
     // Add callback?
@@ -107,4 +128,13 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.glitched-text__wrapper {
+  font-family: "MajorMono";
+  font-size: 40px;
+  white-space: nowrap;
+  margin: 0;
+  font-weight: 600;
+  max-height: 40px;
+}
+</style>
