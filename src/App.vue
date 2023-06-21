@@ -28,11 +28,20 @@
         <template v-slot:full>
           <div class="about-me__wrapper">
             <p class="about-me">
-              Hello there. I am Timothy van der Veen, a Dutch
-              {{ getBirthYear }} year old fullstack developer from Groningen. In
-              the captivating realm of web development variables speak louder
-              than words. Instead of writing a resume full of half-truths and
-              exaggerated claims, I prefer to let my skills do the talking.
+              <span>Hello there</span>
+              <span>I am Timothy van der Veen</span>
+              <span>a {{ getBirthYear }} year old</span>
+              <span>fullstack developer</span>
+              <span>from Groningen</span>
+              <span>In the captivating</span>
+              <span>realm of web development</span>
+              <span>variables speak</span>
+              <span>louder than words</span>
+              <span> Instead of writing a resume</span>
+              <span>full of half-truths</span>
+              <span>and exaggerated claims</span>
+              <span>I prefer to let </span>
+              <span>my skills do the talking</span>
             </p>
           </div>
           <!-- <div class="about-me__wrapper">
@@ -428,11 +437,14 @@ export default defineComponent({
   justify-content: flex-end;
 
   .about-me {
-    text-align: left;
+    text-align: right;
     font-size: 25px;
-    width: 340px;
     font-family: MajorMono;
     text-transform: lowercase;
+
+    span {
+      display: block;
+    }
   }
 }
 
