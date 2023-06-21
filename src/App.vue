@@ -242,17 +242,13 @@ export default defineComponent({
       welcome: [
         "welcome", // English
         "bienvenido", // Spanish
-        "bienvenue", // French
         "willkommen", // German
+        "bem-vindo", // Portuguese
         "benvenuto", // Italian
-        "ようこそ", // Japanese
-        "환영합니다", // Korean
-        "欢迎", // Chinese (Simplified)
-        "velkommen", // Norwegian
+        "bienvenue", // French
         "välkommen", // Swedish
-        "welkom", // Dutch
-        "स्वागत हे", // Hindi
-        "أهلاً وسهلاً", // Arabic
+        "velkommen", // Norwegian
+        "witaj", // Polish
       ],
       interactions: [
         "how are you?",
