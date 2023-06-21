@@ -1,301 +1,506 @@
 <template>
-  <div id="cursor" ref="cursor" />
-  <!-- <div ref="cursor" class="cursor" /> -->
-  <KeepAlive>
-    <LayoutBanner ref="banner" />
-  </KeepAlive>
-
-  <!-- <div
-    style="
-      border: 4px solid black;
-      top: 50%;
-      left: 0;
-      right: 0;
-      position: fixed;
-      z-index: 10000;
-      translate: 0 -50%;
-    "
-  /> -->
-
-  <div class="content" ref="content">
-    <div class="content__scroll-indicator" ref="scrollIndicator" />
-    <div class="content__bar" ref="contentBar">
-      <LayoutNavbar />
+  <div class="content__container" id="content-container" v-if="!isMobile()">
+    <LayoutNavbar />
+    <div class="welcome-text__wrapper">
+      <GlitchedText :text="text" class="welcome-text" />
     </div>
+    <div class="content__wrapper">
+      <ContentPage :wideHr="true">
+        <template v-slot:upper>
+          <GlitchedText
+            text="timothy"
+            class="content__page--upper__header"
+            id="firstname"
+          />
+        </template>
 
-    <div class="content__view" ref="contentView" :key="currentPath">
-      <div class="content__view--page">test</div>
-      <div class="content__view--page">test</div>
+        <template v-slot:lower>
+          <GlitchedText
+            ref="surname"
+            text="van der Veen"
+            class="content__page--lower__header"
+            id="surname"
+          />
+        </template>
+      </ContentPage>
+
+      <ContentPage :full="true">
+        <template v-slot:full>
+          <div class="about-me__wrapper">
+            <p class="about-me">
+              Hello there. I am Timothy van der Veen, a Dutch
+              {{ getBirthYear }} year old fullstack developer from Groningen. In
+              the captivating realm of web development variables speak louder
+              than words. Instead of writing a resume full of half-truths and
+              exaggerated claims, I prefer to let my skills do the talking.
+            </p>
+          </div>
+          <!-- <div class="about-me__wrapper">
+            <GlitchedText
+              :distort="false"
+              :text="`Hello there. I am Timothy van der Veen, a ${getBirthYear} year old fullstack developer from Groningen. In the wonderful
+              world of web development variables speak louder than words, so
+              instead of writing a resume full of half-truths and boastiness I
+              have decided to show of my skills through something a bit more
+              tangible.`"
+              class="about-me"
+            />
+          </div> -->
+          <!-- <div class="padded-height about-me__wrapper">
+            <p class="about-me">
+              Hello there. My name is Timothy van der Veen. In the wonderful
+              world of web development variables speak louder than words, so
+              instead of writing a resume full of half-truths and boastiness I
+              have decided to show of my skills through something a bit more
+              tangible.
+            </p>
+          </div> -->
+        </template>
+      </ContentPage>
+
+      <ContentPage :full="true">
+        <template v-slot:full>
+          <div class="stack-list padded-height">
+            <div
+              class="stack"
+              v-for="(stack, index) in stackArray"
+              :key="index"
+            >
+              <GlitchedText :text="stack" />
+            </div>
+          </div>
+          <!-- <GlitchedText
+            text="Why do we use it?"
+            class="content__page--upper__header"
+          /> -->
+        </template>
+
+        <template v-slot:lower />
+      </ContentPage>
+
+      <ContentPage :full="true">
+        <template v-slot:full>
+          <div class="project-list padded-height">
+            <div
+              class="project"
+              v-for="(project, index) in projects"
+              :key="index"
+            >
+              <GlitchedText
+                @mouseenter="projectHover = index"
+                @mouseleave="projectHover = -1"
+                :text="
+                  projectHover === index ? `${project.text}>` : project.text
+                "
+              >
+                <template v-slot="slotProps">
+                  <a target="_blank" :href="`//${project.href}`">
+                    {{ slotProps.text }}
+                  </a>
+                </template>
+              </GlitchedText>
+
+              <GlitchedText
+                @mouseenter="projectCompany = index"
+                @mouseleave="projectCompany = -1"
+                :text="
+                  projectCompany === index
+                    ? `${project.company}>`
+                    : project.company
+                "
+                class="project-company"
+              >
+                <template v-slot="slotProps">
+                  <a target="_blank" :href="`//${project.companyHref}`">
+                    {{ slotProps.text }}
+                  </a>
+                </template>
+              </GlitchedText>
+            </div>
+          </div>
+        </template>
+      </ContentPage>
+
+      <ContentPage :full="true">
+        <template v-slot:full>
+          <div class="social-list padded-height">
+            <div class="social" v-for="(social, index) in socials" :key="index">
+              <GlitchedText
+                @mouseenter="socialHover = index"
+                @mouseleave="socialHover = -1"
+                :text="socialHover === index ? `${social.text}>` : social.text"
+              >
+                <template v-slot="slotProps">
+                  <a
+                    :target="social.href !== '' ? '_blank' : ''"
+                    :href="`//${social.href}`"
+                  >
+                    {{ slotProps.text }}
+                  </a>
+                </template>
+              </GlitchedText>
+            </div>
+          </div>
+        </template>
+      </ContentPage>
     </div>
   </div>
+  <div class="mobile__placeholder" v-else>
+    <GlitchedText text="Mobile version not available yet" />
+  </div>
+  <CustomCursor />
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import LayoutBanner from "@/components/Layout/Banner.vue";
+import { ComponentPublicInstance, defineComponent } from "vue";
 import LayoutNavbar from "@/components/Layout/Navbar.vue";
+import CustomCursor from "@/components/CustomCursor.vue";
+import GlitchedText from "./components/GlitchedText.vue";
+import { useContentStore } from "./store/content";
+import { useScrollerStore } from "./store/scroller";
+import { mapState } from "pinia";
+import ContentPage from "./components/content/ContentPage.vue";
+
+// TODO move content to own components and add component to content store array
+// TODO move project list to own component
+// TODO move stack list to own component
+// TODO move social list to own component
+// TODO important: clean up App, should hold way less logic
 
 export default defineComponent({
-  name: "HomeView",
-  components: {
-    LayoutBanner,
-    LayoutNavbar,
-  },
+  name: "App",
   data: () => ({
-    currentPath: location.pathname,
-    name: null as null | HTMLElement,
-    scrolling: false,
-    scrollLast: 0,
-    scrollYVar: 0,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    debug: {} as any,
-  }),
-  watch: {
-    $route(to) {
-      window.scrollTo(0, 0);
-      this.currentPath = to.path;
-    },
-    scrolling(value) {
-      if (value) {
-        document.documentElement.classList.add("scrolling");
-      } else {
-        document.documentElement.classList.remove("scrolling");
-      }
-    },
-  },
-  beforeUpdate() {
-    this.updateLayout();
-  },
-
-  // TODO CLEAN UP !!!
-  mounted() {
-    // TODO addeventlisteners
-    this.name = document.getElementById(
-      "layout__banner--surname"
-    ) as HTMLElement;
-
-    this.updateLayout();
-
-    const cursor = this.$refs["cursor"] as HTMLElement;
-
-    window.onresize = () => {
-      this.updateLayout();
-    };
-
-    let timer = 0;
-    const breakPoints = [0, innerHeight / 2, innerHeight * 1.5];
-    let breakPointIndex = 0;
-    let deltaNeeded = 0;
-
-    document.addEventListener(
-      "wheel",
-      (e) => {
-        const scrollYRounded = scrollY;
-        const bannerHeight = innerHeight / 2;
-
-        deltaNeeded = deltaNeeded + e.deltaY;
-
-        if (
-          (e.deltaY > 0 && deltaNeeded < 0) ||
-          scrollY >= breakPoints[breakPointIndex + 1]
-        ) {
-          deltaNeeded = 0;
-        } else if (
-          ((e.deltaY < 0 && deltaNeeded > 0) ||
-            scrollY <= breakPoints[breakPointIndex - 1]) ??
-          breakPoints.length
-        ) {
-          deltaNeeded = 0;
-        }
-
-        if (
-          this.scrolling ||
-          (deltaNeeded < innerHeight * 1.5 && deltaNeeded > -innerHeight * 1.5)
-        ) {
-          e.preventDefault();
-          e.stopPropagation();
-
-          return;
-        } else {
-          e.preventDefault();
-
-          deltaNeeded = 0;
-
-          // if (scrollYRounded < bannerHeight) {
-          if (e.deltaY > 0) {
-            this.scrolling = true;
-            if (breakPointIndex < breakPoints.length - 1) {
-              breakPointIndex++;
-            }
-          }
-          if (e.deltaY < 0) {
-            this.scrolling = true;
-            if (breakPointIndex > 0) {
-              breakPointIndex--;
-            }
-          }
-
-          scrollTo({
-            top: breakPoints[breakPointIndex] ?? "0",
-            behavior: "smooth",
-          });
-        }
-
-        if (timer !== 0) {
-          clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-          this.scrolling = false;
-          deltaNeeded = 0;
-        }, 200);
-        // }
+    stackArray: [
+      "JavaScript",
+      "TypeScript",
+      "CSS",
+      "SASS",
+      "NPM/YARN",
+      "AXIOS",
+      "JQuery",
+      "HTML",
+      "Vue",
+      "Nuxt",
+      "Bootstrap",
+      "ESlint",
+      "Prettier",
+      "Postman",
+      "JSON",
+      "MySql/MariaDB",
+      "WSL2",
+      "Bash",
+      "PHP",
+      "Yii2",
+      "Github",
+    ],
+    projectHover: -1,
+    projectCompany: -1,
+    projects: [
+      {
+        text: "spell-it",
+        href: "spellit.nl",
+        company: "nio communicatie & internet",
+        companyHref: "niocommunicatie.nl",
       },
       {
-        passive: false,
+        text: "schoolkr8",
+        href: "schoolkr8.nl",
+        company: "nio communicatie & internet",
+        companyHref: "niocommunicatie.nl",
+      },
+    ],
+    socialHover: -1,
+    socials: [
+      {
+        text: "github",
+        href: "github.com/Timothyvanderveen",
+      },
+      {
+        text: "linkedin",
+        href: "linkedin.com/in/timothyvanderveen/",
+      },
+      {
+        text: "instagram",
+        href: "instagram.com/t.vdveen_/",
+      },
+      // {
+      //   text: "contact form",
+      //   hover: "coming soon",
+      //   href: "",
+      // },
+    ],
+    texts: {
+      welcome: [
+        "welcome", // English
+        "bienvenido", // Spanish
+        "bienvenue", // French
+        "willkommen", // German
+        "benvenuto", // Italian
+        "ようこそ", // Japanese
+        "환영합니다", // Korean
+        "欢迎", // Chinese (Simplified)
+        "velkommen", // Norwegian
+        "välkommen", // Swedish
+        "welkom", // Dutch
+        "स्वागत हे", // Hindi
+        "أهلاً وسهلاً", // Arabic
+      ],
+      interactions: [
+        "how are you?",
+        "nice to meet you",
+        ":)",
+        "<3",
+        "stay awhile",
+        "made with love",
+      ],
+    },
+    text: "welcome",
+    textType: 0,
+    interval: 2000,
+    timeout: 0,
+  }),
+  beforeMount() {
+    document.fonts.ready.then(() => {
+      useContentStore().setFontLoaded();
+    });
+  },
+  mounted() {
+    this.updateText();
+    useContentStore().activateByHash(true, false);
+    useScrollerStore().addScrollAction(() => {
+      const ref = this.$refs["surname"] as ComponentPublicInstance;
+      const surname = ref?.$el as HTMLElement;
+      const app = document.getElementById("app") as HTMLElement;
+
+      if (!surname || !ref) return;
+
+      const newTop = app.scrollTop;
+
+      const style = { top: "-1.1vh", position: "absolute", right: "0" };
+
+      if (app.scrollTop >= innerHeight / 2 - 15) {
+        style.top = `calc(50vh - ${newTop}px + 3.5px)`;
+        style.position = `fixed`;
+        style.right = `40px`;
       }
-    );
 
-    document.onscroll = () => {
-      this.setNamePosition();
-      this.setContentBars();
-      this.setScrollbar();
-
-      if (timer !== 0) {
-        clearTimeout(timer);
+      if (app.scrollTop >= innerHeight / 2 + 15) {
+        style.top = "-1.1vh";
+        style.position = `fixed`;
+        style.right = `40px`;
       }
-      timer = setTimeout(() => {
-        this.scrolling = false;
-        deltaNeeded = 0;
-      }, 200);
-    };
 
-    document.querySelectorAll(".clickable").forEach((e) => {
-      e.addEventListener("mouseenter", () => cursor.classList.add("click"));
-      e.addEventListener("mouseleave", () => cursor.classList.remove("click"));
+      surname.style.top = style.top;
+      surname.style.position = style.position;
+      surname.style.right = style.right;
     });
 
-    document.onmousemove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      cursor.style.left = clientX + "px";
-      cursor.style.top = clientY + "px";
-    };
+    useScrollerStore().createListeners();
+  },
+  computed: {
+    ...mapState(useContentStore, ["getActive"]),
+    getBirthYear() {
+      let birthdateTimeStamp = new Date(1997, 5, 25);
+      let diff = new Date().getTime() - birthdateTimeStamp.getTime();
+      let currentAge = Math.floor(diff / 31557600000);
+      // Divide by 1000*60*60*24*365.25
 
-    document.onmousedown = () => {
-      cursor.classList.add("click");
-    };
-
-    document.onmouseup = () => {
-      cursor.classList.remove("click");
-    };
+      return currentAge;
+    },
+  },
+  watch: {
+    getActive(to) {
+      if (to.id === 1) {
+        this.text = "back again?";
+        this.updateText();
+      }
+    },
   },
   methods: {
-    updateLayout() {
-      this.setNamePosition();
-      this.setContentBars();
-      // this.setScrollbar();
-    },
-    setContentBars() {
-      const contentBar = this.$refs["contentBar"] as HTMLElement;
-
-      if (!contentBar) {
-        return;
-      }
-      const bannerHeight = innerHeight / 2;
-      const newHeightOffset = bannerHeight - scrollY;
-      if (newHeightOffset >= 0) {
-        contentBar.style.height = `calc(100vh - ${Math.floor(
-          newHeightOffset
-        )}px)`;
-      }
-    },
-    setNamePosition() {
-      if (!this.name) {
-        return;
-      }
-      const bannerHeight = innerHeight / 2;
-      if (scrollY >= bannerHeight) {
-        this.name.style.top = "-39px";
-        this.name.style.position = "fixed";
+    isMobile() {
+      if (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        )
+      ) {
+        return true;
       } else {
-        this.name.style.top = "";
-        this.name.style.position = "absolute";
+        return false;
       }
     },
-    setScrollbar() {
-      const bannerHeight = innerHeight / 2;
-      const scrollIndicator = this.$refs.scrollIndicator as HTMLElement;
-      const htmlElement = document.documentElement;
-      if (!scrollIndicator) {
-        return;
-      }
-      if (scrollY < bannerHeight && scrollY >= 0) {
-        scrollIndicator.style.top = `${bannerHeight - scrollY}px`;
-        scrollIndicator.style.width = "0";
-        htmlElement.classList.remove("htmlElement");
-        return;
-      }
+    updateText() {
+      this.interval = 4000;
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.text = useContentStore().fontLoaded ? this.text : "Incorrect font";
 
-      htmlElement.classList.add("snap");
+        let textArray = [] as string[];
 
-      const newScrollY = scrollY - bannerHeight;
-      const scrollBarHeight = innerHeight * 0.1;
-      const totalHeight = htmlElement.offsetHeight - bannerHeight - innerHeight;
-      const percent = newScrollY / totalHeight;
-      scrollIndicator.style.top = `${Math.round(
-        percent * (innerHeight - scrollBarHeight)
-      )}px`;
-      scrollIndicator.style.width = "8px";
+        this.interval = Math.random() * (10000 - 4000) + 4000;
+
+        if (Math.random() > 0.45 || this.textType === 1) {
+          this.textType = 0;
+          textArray = this.texts.welcome;
+        } else {
+          this.textType = 1;
+          textArray = this.texts.interactions;
+        }
+
+        const index = Math.round(Math.random() * (textArray.length - 1));
+        const newText = textArray[index];
+        this.text = newText;
+        this.updateText();
+      }, this.interval);
     },
+  },
+  components: {
+    LayoutNavbar,
+    CustomCursor,
+    GlitchedText,
+    ContentPage,
   },
 });
 </script>
-
 <style lang="scss">
-.content {
-  display: flex;
+.content__container {
   width: 100%;
-  height: 100%;
-  position: relative;
-  background-color: $white;
-  // min-height: calc(100vh + 400px);
-}
+  height: fit-content;
+  background: $white;
+  z-index: 1;
 
-.content__bar {
-  width: $content-bar-width;
-  position: absolute;
-  position: fixed;
-  height: 50vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  bottom: 0;
-  left: 0;
-}
+  .content__wrapper {
+    width: 100%;
+    background-color: $white;
+    scroll-snap-align: start;
+    float: right;
+    #firstname,
+    #surname {
+      font-size: 4.8vh;
+    }
 
-.content__view {
-  margin: 0 20%;
-  width: 100%;
-  font-family: PoiretOne;
-  font-weight: 600;
-  text-align: right;
-
-  .content__view--page {
-    // scroll-snap-align: start;
-    // height: calc(100vh - 40px);
-    height: calc(100vh - 10em);
-    // background: red;
-
-    padding: 5em; // border: dashed 20px;
+    #firstname {
+      z-index: 0;
+      position: fixed;
+      right: 40px;
+      top: 45.9vh;
+    }
+    #surname {
+      top: -1.1vh;
+      z-index: 5;
+      position: absolute;
+    }
+    .content__page:first-child {
+      .content__page--upper {
+        background: unset !important;
+      }
+    }
   }
 }
 
-.content__scroll-indicator {
-  transition: width 0.2s ease-in-out;
-  // translate: 0 20vh;
-  background: black;
+.welcome-text__wrapper {
   position: fixed;
-  height: calc(10vh + 2px);
-  width: 0;
-  top: 0;
+  overflow: hidden;
+  left: 30px;
+  top: 30px;
+  bottom: 0;
+  right: 0;
+  z-index: 0;
+  height: calc(50vh - 30px);
+  max-width: calc(100vw - 60px);
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .welcome-text {
+    opacity: 0.15;
+    font-size: 8vw;
+    max-height: 8vw;
+  }
+}
+
+.about-me__wrapper {
+  height: calc(100% - 20px);
+  width: 100%;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .about-me {
+    text-align: left;
+    font-size: 25px;
+    width: 340px;
+    font-family: MajorMono;
+    text-transform: lowercase;
+  }
+}
+
+// .project-list {
+//   display: flex;
+//   flex-direction: column;
+//   width: 100%;
+//   height: calc(100% - 8vh);
+//   gap: 2vh;
+//   margin-top: 4vh;
+//   justify-content: flex-start;
+//   flex-wrap: nowrap;
+//   align-items: flex-end;
+// }
+
+.padded-height {
+  height: calc(100% - 8vh);
+  position: absolute;
+  top: 4vh;
+}
+
+.stack-list,
+.project-list,
+.social-list {
+  display: flex;
+  flex-direction: column;
+  right: 0;
+  position: absolute;
+  top: 4vh;
+  gap: 1vh;
+  justify-content: center;
+
+  * {
+    text-align: right;
+  }
+
+  .stack * {
+    font-size: 2.8vh !important;
+    max-height: 2.8vh;
+  }
+  // .project *,
+  // .social * {
+  //   font-size: 3.5vw !important;
+  //   max-height: 3.5vw;
+  // }
+  .social-list * {
+    gap: 1vw;
+  }
+  .project-company {
+    max-height: 2vw;
+    * {
+      display: block;
+      font-size: 1.5vw !important;
+      max-height: 1.5vw;
+    }
+  }
+}
+
+.project-list {
+  gap: 10vh;
+}
+
+.mobile__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  align-content: center;
+  width: 100%;
 }
 </style>

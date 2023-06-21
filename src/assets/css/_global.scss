@@ -6,12 +6,6 @@ $banner-size: 50vh;
 $content-bar-width: 20%;
 
 html {
-  scroll-behavior: smooth;
-
-  // &.snap {
-  //   scroll-snap-type: y;
-  //   touch-action: none;
-  // }
 
   * {
     cursor: none;
@@ -20,25 +14,6 @@ html {
   &.scrolling {
     overflow: hidden;
     touch-action: none;
-  }
-  #cursor {
-    width: 10px;
-    height: 10px;
-    background: black;
-    border-radius: 100%;
-    position: fixed;
-    z-index: 10000;
-    pointer-events: none;
-    translate: -50% -50%;
-
-    transition: width 0.1s, height 0.1s, opacity 0.1s;
-    transition-timing-function: ease-in-out;
-
-    &.click:not(&.disabled) {
-      width: 20px;
-      height: 20px;
-      opacity: 0.5;
-    }
   }
 
   background: #f5f5f5;
@@ -66,7 +41,6 @@ html {
     font-size: 40px;
     white-space: nowrap;
     margin: 0;
-    font-weight: 600;
     max-height: 40px;
   }
 
@@ -76,9 +50,21 @@ html {
 }
 
 body {
+  position: absolute;
+  inset: 30px;
+  outline: 2px solid;
   margin: 0;
+  scroll-snap-type: y mandatory;
+  background: $white;
 
-  #app {
+
+  #app { 
+    width: calc(100vw - 80px);
+    height: calc(100vh - 80px);
+    padding: 10px;
+
+    scroll-snap-type: y mandatory;
+    overflow: auto;
     font-family: "PoiretOne";
 
     font-weight: 500;
@@ -87,7 +73,6 @@ body {
     text-align: center;
     font-size: 20px;
 
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
   }
