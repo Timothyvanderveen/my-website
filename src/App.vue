@@ -144,11 +144,11 @@
         </template>
       </ContentPage>
     </div>
+    <CustomCursor />
   </div>
   <div class="mobile__placeholder" v-else>
-    <GlitchedText text="Mobile version not available yet" />
+    <GlitchedText text="Mobile version coming soon" />
   </div>
-  <CustomCursor />
 </template>
 
 <script lang="ts">
@@ -502,5 +502,14 @@ export default defineComponent({
   height: 100%;
   align-content: center;
   width: 100%;
+
+  .glitched-text__wrapper {
+    white-space: normal;
+    height: fit-content;
+    max-height: unset;
+    max-width: calc(100vw - 130px);
+    overflow-wrap: break-word;
+    font-size: 9vw;
+  }
 }
 </style>

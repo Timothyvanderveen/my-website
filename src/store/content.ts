@@ -7,6 +7,7 @@ export interface NavbarItem {
   id: number;
   hover: boolean;
   hash: string;
+  title: string;
 }
 
 export interface State {
@@ -27,6 +28,7 @@ export const useContentStore = defineStore("content", {
         active: true,
         hover: false,
         hash: "#home",
+        title: "Home",
       },
       {
         id: 2,
@@ -37,6 +39,7 @@ export const useContentStore = defineStore("content", {
         active: false,
         hover: false,
         hash: "#about-me",
+        title: "About Me",
       },
       {
         id: 3,
@@ -47,6 +50,7 @@ export const useContentStore = defineStore("content", {
         active: false,
         hover: false,
         hash: "#my-stack",
+        title: "My Stack",
       },
       {
         id: 4,
@@ -57,6 +61,7 @@ export const useContentStore = defineStore("content", {
         active: false,
         hover: false,
         hash: "#my-projects",
+        title: "My Projects",
       },
       {
         id: 5,
@@ -67,6 +72,7 @@ export const useContentStore = defineStore("content", {
         active: false,
         hover: false,
         hash: "#my-socials",
+        title: "My Socials",
       },
     ],
   }),
@@ -120,6 +126,7 @@ export const useContentStore = defineStore("content", {
       });
 
       window.location.hash = this.getActive.hash;
+      document.title = `${this.getActive.title} - Timothy van der Veen`;
 
       if (scroll) {
         this.scrollToActive(smooth);
