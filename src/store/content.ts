@@ -23,7 +23,7 @@ export const useContentStore = defineStore("content", {
         id: 1,
         text: {
           default: "home",
-          active: "home.",
+          active: "home_",
         },
         active: true,
         hover: false,
@@ -34,7 +34,7 @@ export const useContentStore = defineStore("content", {
         id: 2,
         text: {
           default: "Who am i",
-          active: "i am.",
+          active: "i am_",
         },
         active: false,
         hover: false,
@@ -45,7 +45,7 @@ export const useContentStore = defineStore("content", {
         id: 3,
         text: {
           default: "stack",
-          active: "my stack.",
+          active: "my stack_",
         },
         active: false,
         hover: false,
@@ -56,7 +56,7 @@ export const useContentStore = defineStore("content", {
         id: 4,
         text: {
           default: "projects",
-          active: "my projects.",
+          active: "my projects_",
         },
         active: false,
         hover: false,
@@ -67,7 +67,7 @@ export const useContentStore = defineStore("content", {
         id: 5,
         text: {
           default: "socials",
-          active: "my socials.",
+          active: "my socials_",
         },
         active: false,
         hover: false,
