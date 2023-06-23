@@ -1,5 +1,5 @@
 <template>
-  <div class="welcome-text__wrapper">
+  <div class="welcome-text__wrapper" v-if="!isMobile()">
     <GlitchedText :text="text" class="welcome-text" />
   </div>
   <div class="content__container" id="content-container" v-if="!isMobile()">
@@ -313,16 +313,15 @@ export default defineComponent({
   },
   methods: {
     isMobile() {
-      return false;
-      // if (
-      //   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      //     navigator.userAgent
-      //   )
-      // ) {
-      //   return true;
-      // } else {
-      //   return false;
-      // }
+      if (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        )
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     },
     updateText() {
       this.interval = 4000;
@@ -370,9 +369,6 @@ export default defineComponent({
     scroll-snap-align: start;
     height: 100%;
     margin-top: -3vmin;
-    #firstname,
-    #surname {
-    }
 
     #firstname {
       z-index: 0;
@@ -430,10 +426,6 @@ export default defineComponent({
       margin: 1vmin 0;
       font-family: "MajorMono";
       max-height: unset;
-      height: calc(3.7vmin / 2);
-      font-size: calc($primary-font-size / 2);
-      line-height: calc(3.16vmin / 2);
-      overflow: hidden;
       display: block;
     }
   }
@@ -513,6 +505,9 @@ export default defineComponent({
     max-width: calc(100vw - 130px);
     overflow-wrap: break-word;
     font-size: 9vw;
+
+    line-height: unset !important;
+    height: fit-content !important;
   }
 }
 </style>

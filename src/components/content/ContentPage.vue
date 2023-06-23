@@ -77,7 +77,7 @@ export default defineComponent({
     position: relative;
     margin-left: auto;
     background-color: $white;
-    padding-left: 50%;
+    padding-left: 30%;
   }
 
   :deep() {
