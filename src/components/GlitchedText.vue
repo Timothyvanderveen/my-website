@@ -1,5 +1,5 @@
 <template>
-  <div class="glitched-text__wrapper">
+  <div class="glitched-text__wrapper primary-font">
     <slot :text="shownText">{{ shownText }} </slot>
   </div>
 </template>
@@ -170,10 +170,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .glitched-text__wrapper {
-  font-family: "MajorMono";
-  font-size: 40px;
   white-space: nowrap;
   margin: 0;
-  max-height: 40px;
 }
 </style>

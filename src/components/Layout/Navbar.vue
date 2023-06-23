@@ -55,20 +55,20 @@ export default defineComponent({
       const navbar = this.$refs["navbar"] as HTMLElement;
       const getContentPageFirst =
         document.getElementsByClassName("content__page")[0];
+      const { scrollTop } = document.getElementById("app") as HTMLElement;
 
-      if (!navbar || !getContentPageFirst) {
+      if (!navbar || !getContentPageFirst || !scrollTop) {
         return;
       }
 
       const firstPageBottomRect = getContentPageFirst.getBoundingClientRect();
+      const borderWidth = useContentStore().vmin(5);
 
-      let newTop = firstPageBottomRect.bottom / 2 - 15;
-
-      navbar.style.top = newTop + "px";
-
-      if (newTop <= 0) {
-        navbar.style.top = "0";
-        return;
+      if (scrollTop >= innerHeight / 2 - borderWidth) {
+        navbar.style.top = borderWidth + "px";
+      } else {
+        let newTop = (firstPageBottomRect.bottom - scrollTop + borderWidth) / 2;
+        navbar.style.top = newTop + "px";
       }
     },
     activate(navbarItem: NavbarItem) {
@@ -89,15 +89,14 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .navbar {
-  position: absolute;
-  top: 51%;
-  bottom: 0;
+  position: fixed;
+  top: 50%;
+  bottom: $outsideBorder;
   display: flex;
   width: 320px;
   flex-direction: column;
   justify-content: center;
   z-index: 5;
-  top: calc(50% - -3px);
 }
 .navbar__menu {
   display: flex;
@@ -108,14 +107,6 @@ export default defineComponent({
   gap: 1em;
 
   .navbar__item {
-    translate: 0em;
-    line-height: 26px;
-    height: 30.3px;
-
-    * {
-      font-size: 30px;
-    }
-
     .navbar__item--active {
       opacity: 0;
       position: absolute;
@@ -133,8 +124,10 @@ export default defineComponent({
       transition: transform 0.2s ease-in-out;
       z-index: 1;
       position: relative;
-      max-height: 40px;
+      // line-height: $primary-font-size;
+      // height: $primary-font-size;
       pointer-events: none;
+      font-size: 4vmin;
     }
 
     &.hidden {

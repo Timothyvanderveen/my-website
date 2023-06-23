@@ -1,15 +1,15 @@
 <template>
+  <div class="welcome-text__wrapper">
+    <GlitchedText :text="text" class="welcome-text" />
+  </div>
   <div class="content__container" id="content-container" v-if="!isMobile()">
     <LayoutNavbar />
-    <div class="welcome-text__wrapper">
-      <GlitchedText :text="text" class="welcome-text" />
-    </div>
     <div class="content__wrapper">
       <ContentPage :wideHr="true">
         <template v-slot:upper>
           <GlitchedText
             text="timothy"
-            class="content__page--upper__header"
+            class="content__page--upper__header primary-font"
             id="firstname"
           />
         </template>
@@ -18,7 +18,7 @@
           <GlitchedText
             ref="surname"
             text="van der Veen"
-            class="content__page--lower__header"
+            class="content__page--lower__header primary-font"
             id="surname"
           />
         </template>
@@ -28,42 +28,15 @@
         <template v-slot:full>
           <div class="about-me__wrapper">
             <p class="about-me">
-              <span>Hello there</span>
-              <span>I am Timothy van der Veen</span>
-              <span>a {{ getBirthYear }} year old</span>
-              <span>fullstack developer</span>
-              <span>from Groningen</span>
-              <span>In the captivating</span>
-              <span>realm of web development</span>
-              <span>variables speak</span>
-              <span>louder than words</span>
-              <span> Instead of writing a resume</span>
-              <span>full of half-truths</span>
-              <span>and exaggerated claims</span>
-              <span>I prefer to let </span>
-              <span>my skills do the talking</span>
+              <span
+                v-for="(spanText, index) in aboutMeSpanArray"
+                :key="index"
+                class="secondary-font"
+              >
+                {{ spanText }}
+              </span>
             </p>
           </div>
-          <!-- <div class="about-me__wrapper">
-            <GlitchedText
-              :distort="false"
-              :text="`Hello there. I am Timothy van der Veen, a ${getBirthYear} year old fullstack developer from Groningen. In the wonderful
-              world of web development variables speak louder than words, so
-              instead of writing a resume full of half-truths and boastiness I
-              have decided to show of my skills through something a bit more
-              tangible.`"
-              class="about-me"
-            />
-          </div> -->
-          <!-- <div class="padded-height about-me__wrapper">
-            <p class="about-me">
-              Hello there. My name is Timothy van der Veen. In the wonderful
-              world of web development variables speak louder than words, so
-              instead of writing a resume full of half-truths and boastiness I
-              have decided to show of my skills through something a bit more
-              tangible.
-            </p>
-          </div> -->
         </template>
       </ContentPage>
 
@@ -78,10 +51,6 @@
               <GlitchedText :text="stack" />
             </div>
           </div>
-          <!-- <GlitchedText
-            text="Why do we use it?"
-            class="content__page--upper__header"
-          /> -->
         </template>
 
         <template v-slot:lower />
@@ -281,18 +250,21 @@ export default defineComponent({
 
       const newTop = app.scrollTop;
 
-      const style = { top: "-1.1vh", position: "absolute", right: "0" };
+      const style = { top: "0", position: "absolute", right: "0" };
 
-      if (app.scrollTop >= innerHeight / 2 - 15) {
-        style.top = `calc(50vh - ${newTop}px + 3.5px)`;
+      const innerPadding = useContentStore().vmin(3);
+      const outerBorder = useContentStore().vmin(5);
+
+      if (app.scrollTop >= innerHeight / 2 - outerBorder) {
+        style.top = `calc(50vh - ${app.scrollTop}px + 0.3vmin)`;
         style.position = `fixed`;
-        style.right = `40px`;
+        style.right = innerPadding + outerBorder + "px";
       }
 
-      if (app.scrollTop >= innerHeight / 2 + 15) {
-        style.top = "-1.1vh";
+      if (app.scrollTop >= innerHeight / 2 - useContentStore().vmin(0.3)) {
+        style.top = "0.7vmin";
         style.position = `fixed`;
-        style.right = `40px`;
+        style.right = innerPadding + outerBorder + "px";
       }
 
       surname.style.top = style.top;
@@ -312,6 +284,24 @@ export default defineComponent({
 
       return currentAge;
     },
+    aboutMeSpanArray() {
+      return [
+        "Hello there",
+        "I am Timothy van der Veen",
+        `a ${this.getBirthYear} year old`,
+        "fullstack developer",
+        "from Groningen",
+        "In the captivating",
+        "realm of web development",
+        "variables speak",
+        "louder than words",
+        "Instead of writing a resume",
+        "full of half-truths",
+        "and exaggerated claims",
+        "I prefer to let",
+        "my skills do the talking",
+      ];
+    },
   },
   watch: {
     getActive(to) {
@@ -323,15 +313,16 @@ export default defineComponent({
   },
   methods: {
     isMobile() {
-      if (
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        )
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      return false;
+      // if (
+      //   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      //     navigator.userAgent
+      //   )
+      // ) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
     },
     updateText() {
       this.interval = 4000;
@@ -369,7 +360,7 @@ export default defineComponent({
 <style lang="scss">
 .content__container {
   width: 100%;
-  height: fit-content;
+  height: calc(100vh - 4vmin);
   background: $white;
   z-index: 1;
 
@@ -377,20 +368,20 @@ export default defineComponent({
     width: 100%;
     background-color: $white;
     scroll-snap-align: start;
-    float: right;
+    height: 100%;
+    margin-top: -3vmin;
     #firstname,
     #surname {
-      font-size: 4.8vh;
     }
 
     #firstname {
       z-index: 0;
       position: fixed;
-      right: 40px;
-      top: 45.9vh;
+      right: calc($outsideBorder + $insidePadding);
+      top: 46.31vh;
     }
     #surname {
-      top: -1.1vh;
+      // top: -1.1vh;
       z-index: 5;
       position: absolute;
     }
@@ -405,13 +396,11 @@ export default defineComponent({
 .welcome-text__wrapper {
   position: fixed;
   overflow: hidden;
-  left: 30px;
-  top: 30px;
-  bottom: 0;
-  right: 0;
+  inset: 0;
+  top: $outsideBorder;
   z-index: 0;
-  height: calc(50vh - 30px);
-  max-width: calc(100vw - 60px);
+  height: calc(50vh - 5vmin);
+  width: 100%;
   pointer-events: none;
   display: flex;
   justify-content: center;
@@ -419,8 +408,9 @@ export default defineComponent({
 
   .welcome-text {
     opacity: 0.15;
-    font-size: 8vw;
-    max-height: 8vw;
+    font-size: 8vmin !important;
+    max-height: 8vmin !important;
+    overflow: visible !important;
   }
 }
 
@@ -434,11 +424,16 @@ export default defineComponent({
 
   .about-me {
     text-align: right;
-    font-size: 25px;
-    font-family: MajorMono;
     text-transform: lowercase;
 
     span {
+      margin: 1vmin 0;
+      font-family: "MajorMono";
+      max-height: unset;
+      height: calc(3.7vmin / 2);
+      font-size: calc($primary-font-size / 2);
+      line-height: calc(3.16vmin / 2);
+      overflow: hidden;
       display: block;
     }
   }
@@ -457,9 +452,13 @@ export default defineComponent({
 // }
 
 .padded-height {
-  height: calc(100% - 8vh);
+  height: calc(100% - ($insidePadding * 2));
   position: absolute;
-  top: 4vh;
+  top: $insidePadding;
+}
+
+.social-list {
+  gap: 2vmin;
 }
 
 .stack-list,
@@ -469,8 +468,7 @@ export default defineComponent({
   flex-direction: column;
   right: 0;
   position: absolute;
-  top: 4vh;
-  gap: 1vh;
+  // gap: 1vh;
   justify-content: center;
 
   * {
@@ -486,9 +484,6 @@ export default defineComponent({
   //   font-size: 3.5vw !important;
   //   max-height: 3.5vw;
   // }
-  .social-list * {
-    gap: 1vw;
-  }
   .project-company {
     max-height: 2vw;
     * {

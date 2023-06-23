@@ -16,7 +16,10 @@ export const useScrollerStore = defineStore("scroller", {
     scrollActions: [
       function () {
         const scrolledID =
-          Math.round(useScrollerStore().getScrollTop() / innerHeight) + 1;
+          Math.round(
+            useScrollerStore().getScrollTop() /
+              (innerHeight - useContentStore().vmin(10))
+          ) + 1;
         if (useScrollerStore().goToIndex === -1) {
           useContentStore().activateByID(scrolledID);
         }
@@ -32,7 +35,7 @@ export const useScrollerStore = defineStore("scroller", {
       return document.getElementById("app") as HTMLElement;
     },
     getScrollTop() {
-      return this.getApp().scrollTop - 10;
+      return this.getApp().scrollTop;
     },
     addScrollAction(scrollAction: CallableFunction) {
       const scrollActions = this.scrollActions;
@@ -53,6 +56,13 @@ export const useScrollerStore = defineStore("scroller", {
       );
       this.getApp().addEventListener(
         "wheel",
+        () => {
+          // this.scrollActions.forEach((scrollAction) => scrollAction());
+        },
+        false
+      );
+      window.addEventListener(
+        "resize",
         () => {
           this.scrollActions.forEach((scrollAction) => scrollAction());
         },

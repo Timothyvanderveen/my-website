@@ -41,8 +41,9 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .content__page {
-  height: calc(100vh - 60px);
+  height: $viewHeight;
   scroll-snap-align: start;
+  overflow: hidden;
 
   .hr-wrapper {
     background: $white;

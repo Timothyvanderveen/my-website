@@ -145,6 +145,23 @@ export const useContentStore = defineStore("content", {
         fontLoaded: document.fonts.check("40px MajorMono"),
       });
     },
+    vh(percent: number) {
+      const h = Math.max(
+        document.documentElement.clientHeight,
+        window.innerHeight || 0
+      );
+      return (percent * h) / 100;
+    },
+    vw(percent: number) {
+      const w = Math.max(
+        document.documentElement.clientWidth,
+        window.innerWidth || 0
+      );
+      return (percent * w) / 100;
+    },
+    vmin(percent: number) {
+      return Math.min(this.vh(percent), this.vw(percent));
+    },
   },
   getters: {
     getNavbarText: (state) => (navbarItem: NavbarItem) => {
