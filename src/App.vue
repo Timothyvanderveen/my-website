@@ -124,7 +124,7 @@
     </div>
     <CustomCursor />
   </div>
-  <div class="mobile__placeholder" v-else>
+  <div class="mobile__placeholder" v-if="isMobile()">
     <GlitchedText text="Mobile version coming soon" />
   </div>
 </template>
@@ -247,8 +247,6 @@ export default defineComponent({
       const app = document.getElementById("app") as HTMLElement;
 
       if (!surname || !ref) return;
-
-      const newTop = app.scrollTop;
 
       const style = { top: "0", position: "absolute", right: "0" };
 
