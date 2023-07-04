@@ -77,6 +77,17 @@ export const useContentStore = defineStore("content", {
     ],
   }),
   actions: {
+    isMobile() {
+      if (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        )
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     scrollToActive(smooth = true) {
       useScrollerStore().goTo(this.getActive.id, smooth);
     },
