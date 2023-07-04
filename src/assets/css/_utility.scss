@@ -1,0 +1,22 @@
+.padded-height {
+  height: calc(100% - ($insidePadding * 2));
+  position: absolute;
+  top: $insidePadding;
+}
+
+.primary-font, .secondary-font {
+  font-family: "MajorMono";
+  max-height: unset;
+}
+
+.primary-font {
+  height: 3.7vmin;
+  font-size: $primary-font-size;
+  line-height: 3.16vmin;
+}
+
+.secondary-font {
+  height: calc(3.7vmin / 2);
+  font-size: calc($primary-font-size / 2);
+  line-height: calc(3.16vmin / 2);
+}

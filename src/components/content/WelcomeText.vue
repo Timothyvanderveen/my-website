@@ -80,11 +80,11 @@ watch(contentStore.getActive, async (to) => {
 .welcome-text__wrapper {
   position: fixed;
   overflow: hidden;
-  inset: 0;
   top: $outsideBorder;
+  left: $outsideBorder + $insidePadding;
   z-index: 0;
   height: calc(50vh - 5vmin);
-  width: 100%;
+  width: Calc(100vw - $outsideBorder * 2 - $insidePadding * 2);
   pointer-events: none;
   display: flex;
   justify-content: center;

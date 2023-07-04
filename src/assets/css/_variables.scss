@@ -1,0 +1,12 @@
+$white: #f5f5f5;
+$banner-size: 50vh;
+$content-bar-width: 20%;
+$primary-font-size: 5vmin;
+$outsideBorder: 5vmin;
+$insidePadding: 3vmin;
+
+$viewWidth: calc(100vw - $outsideBorder * 2);
+$viewHeight: calc(100vh - $outsideBorder * 2); 
+$viewWidthPadded: calc(100% - $insidePadding * 2);
+$viewHeightPadded: calc(100vh - $insidePadding * 2 - $outsideBorder * 2);
+$lineWidth: max(0.1vw, 2px);

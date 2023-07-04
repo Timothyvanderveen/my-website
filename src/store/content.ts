@@ -1,5 +1,13 @@
 import { defineStore } from "pinia";
 import { useScrollerStore } from "./scroller";
+import { Component } from "vue";
+
+// VIEWS
+import HomeView from "@/components/content/views/HomeView.vue";
+import AboutMeView from "@/components/content/views/AboutMeView.vue";
+import StackView from "@/components/content/views/StackView.vue";
+import ProjectView from "@/components/content/views/ProjectView.vue";
+import SocialView from "@/components/content/views/SocialView.vue";
 
 export interface NavbarItem {
   text: { default: string; active?: string };
@@ -8,6 +16,7 @@ export interface NavbarItem {
   hover: boolean;
   hash: string;
   title: string;
+  view: Component;
 }
 
 export interface State {
@@ -29,6 +38,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#home",
         title: "Home",
+        view: HomeView,
       },
       {
         id: 2,
@@ -40,6 +50,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#about-me",
         title: "About Me",
+        view: AboutMeView,
       },
       {
         id: 3,
@@ -51,6 +62,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#my-stack",
         title: "My Stack",
+        view: StackView,
       },
       {
         id: 4,
@@ -62,6 +74,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#my-projects",
         title: "My Projects",
+        view: ProjectView,
       },
       {
         id: 5,
@@ -73,6 +86,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#my-socials",
         title: "My Socials",
+        view: SocialView,
       },
     ],
   }),

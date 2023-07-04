@@ -1,5 +1,5 @@
 <template>
-  <div class="content__page" v-if="!full">
+  <div v-if="!full" class="content__page">
     <div class="content__page--upper">
       <slot name="upper" />
     </div>
@@ -9,33 +9,25 @@
       <slot name="lower" />
     </div>
   </div>
-  <div class="content__page" v-if="full">
+  <div v-else class="content__page">
     <div class="content__page--full">
       <slot name="full" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "ContentPage",
-  data: () => ({}),
-  props: {
-    full: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    wideHr: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
+<script lang="ts" setup>
+defineProps({
+  full: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
-  computed: {},
-  methods: {},
+  wideHr: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 </script>
 
