@@ -86,8 +86,8 @@ export default defineComponent({
 #custom-cursor {
   top: -10px;
   left: -10px;
-  width: 10px;
-  height: 10px;
+  width: 1vmin;
+  height: 1vmin;
   background: black;
   border-radius: 100%;
   position: fixed;
@@ -99,8 +99,8 @@ export default defineComponent({
   transition-timing-function: ease-in-out;
 
   &.click:not(&.disabled) {
-    width: 20px;
-    height: 20px;
+    width: 2vmin;
+    height: 2vmin;
     opacity: 0.5;
   }
 }
