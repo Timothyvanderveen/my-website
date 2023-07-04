@@ -59,7 +59,7 @@ const getSpanArray = () => {
     justify-content: flex-end;
 
     .about-me {
-      text-align: right;
+      text-align: left;
       text-transform: lowercase;
 
       span {
