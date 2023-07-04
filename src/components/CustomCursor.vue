@@ -2,84 +2,82 @@
   <div id="custom-cursor" ref="cursor" />
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
+import { useContentStore } from "@/store/content";
+import { ref } from "vue";
 
-export default defineComponent({
-  name: "CustomCursor",
-  data: () => ({
-    cursor: Object.create(HTMLElement.prototype, {}) as HTMLElement,
-  }),
-  computed: {},
-  mounted() {
-    this.cursor = this.$refs["cursor"] as HTMLElement;
-    this.addListeners();
-  },
-  methods: {
-    addListeners() {
-      document.addEventListener("mousemove", (e) => {
-        this.setCursor(e);
-        this.setClickable(e);
-      });
+const cursor = ref<HTMLDivElement | null>(null);
 
-      document.onmousedown = () => {
-        this.addClick();
-      };
+const addListeners = () => {
+  document.addEventListener("mousemove", (e) => {
+    setCursor(e);
+    setClickable(e);
+  });
 
-      document.onmouseup = () => {
-        this.removeClick();
-      };
-    },
-    setCursor({ clientX, clientY }: MouseEvent) {
-      const offset = 33;
-      const insideLeft = clientX > offset;
-      const insideRight = clientX < innerWidth - offset;
+  document.onmousedown = () => {
+    addClick();
+  };
 
-      if (insideLeft && insideRight) {
-        this.cursor.style.left = clientX + "px";
-      } else {
-        if (insideRight) {
-          this.cursor.style.left = clientX + (offset - clientX) + "px";
-        }
-        if (insideLeft) {
-          this.cursor.style.left =
-            clientX + (innerWidth - offset - clientX) + "px";
-        }
-      }
+  document.onmouseup = () => {
+    removeClick();
+  };
+};
 
-      const insideTop = clientY > offset;
-      const insideBottom = clientY < innerHeight - offset;
+const setCursor = ({ clientX, clientY }: MouseEvent) => {
+  if (!cursor.value) return;
 
-      if (insideTop && insideBottom) {
-        this.cursor.style.top = clientY + "px";
-      } else {
-        if (insideBottom) {
-          this.cursor.style.top = clientY + (offset - clientY) + "px";
-        }
-        if (insideTop) {
-          this.cursor.style.top =
-            clientY + (innerHeight - offset - clientY) + "px";
-        }
-      }
-    },
-    setClickable({ target }: MouseEvent) {
-      if (
-        target instanceof HTMLElement &&
-        (target.classList.contains("clickable") || target.tagName === "A")
-      ) {
-        this.addClick();
-      } else {
-        this.removeClick();
-      }
-    },
-    addClick() {
-      this.cursor.classList.add("click");
-    },
-    removeClick() {
-      this.cursor.classList.remove("click");
-    },
-  },
-});
+  const offset = useContentStore().vmin(5);
+  const insideLeft = clientX > offset;
+  const insideRight = clientX < innerWidth - offset;
+
+  if (insideLeft && insideRight) {
+    cursor.value.style.left = clientX + "px";
+  } else {
+    if (insideRight) {
+      cursor.value.style.left = clientX + (offset - clientX) + "px";
+    }
+    if (insideLeft) {
+      cursor.value.style.left =
+        clientX + (innerWidth - offset - clientX) + "px";
+    }
+  }
+
+  const insideTop = clientY > offset;
+  const insideBottom = clientY < innerHeight - offset;
+
+  if (insideTop && insideBottom) {
+    cursor.value.style.top = clientY + "px";
+  } else {
+    if (insideBottom) {
+      cursor.value.style.top = clientY + (offset - clientY) + "px";
+    }
+    if (insideTop) {
+      cursor.value.style.top =
+        clientY + (innerHeight - offset - clientY) + "px";
+    }
+  }
+};
+
+const setClickable = ({ target }: MouseEvent) => {
+  if (
+    target instanceof HTMLElement &&
+    (target.classList.contains("clickable") || target.tagName === "A")
+  ) {
+    addClick();
+  } else {
+    removeClick();
+  }
+};
+
+const addClick = () => {
+  cursor.value?.classList.add("click");
+};
+
+const removeClick = () => {
+  cursor.value?.classList.remove("click");
+};
+
+addListeners();
 </script>
 
 <style scoped lang="scss">
