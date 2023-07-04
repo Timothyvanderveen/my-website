@@ -1,31 +1,29 @@
 <template>
-  <div class="welcome-text__wrapper" v-if="!isMobile()">
-    <GlitchedText :text="text" class="welcome-text" />
-  </div>
-  <div class="content__container" id="content-container" v-if="!isMobile()">
+  <WelcomeText />
+  <div v-if="!isMobile()" id="content-container" class="content__container">
     <LayoutNavbar />
     <div class="content__wrapper">
-      <ContentPage :wideHr="true">
-        <template v-slot:upper>
+      <ContentPage :wide-hr="true">
+        <template #upper>
           <GlitchedText
+            id="firstname"
             text="timothy"
             class="content__page--upper__header primary-font"
-            id="firstname"
           />
         </template>
 
-        <template v-slot:lower>
+        <template #lower>
           <GlitchedText
+            id="surname"
             ref="surname"
             text="van der Veen"
             class="content__page--lower__header primary-font"
-            id="surname"
           />
         </template>
       </ContentPage>
 
       <ContentPage :full="true">
-        <template v-slot:full>
+        <template #full>
           <div class="about-me__wrapper">
             <p class="about-me">
               <span
@@ -41,37 +39,37 @@
       </ContentPage>
 
       <ContentPage :full="true">
-        <template v-slot:full>
+        <template #full>
           <div class="stack-list padded-height">
             <div
-              class="stack"
               v-for="(stack, index) in stackArray"
               :key="index"
+              class="stack"
             >
               <GlitchedText :text="stack" />
             </div>
           </div>
         </template>
 
-        <template v-slot:lower />
+        <template #lower />
       </ContentPage>
 
       <ContentPage :full="true">
-        <template v-slot:full>
+        <template #full>
           <div class="project-list padded-height">
             <div
-              class="project"
               v-for="(project, index) in projects"
               :key="index"
+              class="project"
             >
               <GlitchedText
-                @mouseenter="projectHover = index"
-                @mouseleave="projectHover = -1"
                 :text="
                   projectHover === index ? `${project.text}>` : project.text
                 "
+                @mouseenter="projectHover = index"
+                @mouseleave="projectHover = -1"
               >
-                <template v-slot="slotProps">
+                <template #default="slotProps">
                   <a target="_blank" :href="`//${project.href}`">
                     {{ slotProps.text }}
                   </a>
@@ -79,16 +77,16 @@
               </GlitchedText>
 
               <GlitchedText
-                @mouseenter="projectCompany = index"
-                @mouseleave="projectCompany = -1"
                 :text="
                   projectCompany === index
                     ? `${project.company}>`
                     : project.company
                 "
                 class="project-company"
+                @mouseenter="projectCompany = index"
+                @mouseleave="projectCompany = -1"
               >
-                <template v-slot="slotProps">
+                <template #default="slotProps">
                   <a target="_blank" :href="`//${project.companyHref}`">
                     {{ slotProps.text }}
                   </a>
@@ -100,15 +98,15 @@
       </ContentPage>
 
       <ContentPage :full="true">
-        <template v-slot:full>
+        <template #full>
           <div class="social-list padded-height">
-            <div class="social" v-for="(social, index) in socials" :key="index">
+            <div v-for="(social, index) in socials" :key="index" class="social">
               <GlitchedText
+                :text="socialHover === index ? `${social.text}>` : social.text"
                 @mouseenter="socialHover = index"
                 @mouseleave="socialHover = -1"
-                :text="socialHover === index ? `${social.text}>` : social.text"
               >
-                <template v-slot="slotProps">
+                <template #default="slotProps">
                   <a
                     :target="social.href !== '' ? '_blank' : ''"
                     :href="`//${social.href}`"
@@ -124,7 +122,7 @@
     </div>
     <CustomCursor />
   </div>
-  <div class="mobile__placeholder" v-if="isMobile()">
+  <div v-if="isMobile()" class="mobile__placeholder">
     <GlitchedText text="Mobile version coming soon" />
   </div>
 </template>
@@ -136,8 +134,9 @@ import CustomCursor from "@/components/CustomCursor.vue";
 import GlitchedText from "./components/GlitchedText.vue";
 import { useContentStore } from "./store/content";
 import { useScrollerStore } from "./store/scroller";
-import { mapState } from "pinia";
+import { mapActions, mapState } from "pinia";
 import ContentPage from "./components/content/ContentPage.vue";
+import WelcomeText from "./components/content/WelcomeText.vue";
 
 // TODO move content to own components and add component to content store array
 // TODO move project list to own component
@@ -147,6 +146,13 @@ import ContentPage from "./components/content/ContentPage.vue";
 
 export default defineComponent({
   name: "App",
+  components: {
+    LayoutNavbar,
+    CustomCursor,
+    GlitchedText,
+    ContentPage,
+    WelcomeText,
+  },
   data: () => ({
     stackArray: [
       "JavaScript",
@@ -207,39 +213,42 @@ export default defineComponent({
       //   href: "",
       // },
     ],
-    texts: {
-      welcome: [
-        "welcome", // English
-        "bienvenido", // Spanish
-        "willkommen", // German
-        "bem-vindo", // Portuguese
-        "benvenuto", // Italian
-        "bienvenue", // French
-        "välkommen", // Swedish
-        "velkommen", // Norwegian
-        "witaj", // Polish
-      ],
-      interactions: [
-        "how are you?",
-        "nice to meet you",
-        ":)",
-        "<3",
-        "stay awhile",
-        "made with love",
-      ],
-    },
-    text: "welcome",
-    textType: 0,
-    interval: 2000,
-    timeout: 0,
   }),
+  computed: {
+    ...mapState(useContentStore, ["getActive"]),
+    getBirthYear() {
+      let birthdateTimeStamp = new Date(1997, 5, 25);
+      let diff = new Date().getTime() - birthdateTimeStamp.getTime();
+      let currentAge = Math.floor(diff / 31557600000);
+      // Divide by 1000*60*60*24*365.25
+
+      return currentAge;
+    },
+    aboutMeSpanArray() {
+      return [
+        "Hello there_",
+        "I am Timothy van der Veen",
+        `a ${this.getBirthYear} year old`,
+        "fullstack developer",
+        "from Groningen_",
+        "In the captivating",
+        "realm of web development",
+        "variables speak",
+        "louder than words_",
+        "Instead of writing a resume",
+        "full of half-truths",
+        "and exaggerated claims",
+        "I prefer to let",
+        "my skills do the talking_",
+      ];
+    },
+  },
   beforeMount() {
     document.fonts.ready.then(() => {
       useContentStore().setFontLoaded();
     });
   },
   mounted() {
-    this.updateText();
     useContentStore().activateByHash(true, false);
     useScrollerStore().addScrollAction(() => {
       const ref = this.$refs["surname"] as ComponentPublicInstance;
@@ -272,85 +281,8 @@ export default defineComponent({
 
     useScrollerStore().createListeners();
   },
-  computed: {
-    ...mapState(useContentStore, ["getActive"]),
-    getBirthYear() {
-      let birthdateTimeStamp = new Date(1997, 5, 25);
-      let diff = new Date().getTime() - birthdateTimeStamp.getTime();
-      let currentAge = Math.floor(diff / 31557600000);
-      // Divide by 1000*60*60*24*365.25
-
-      return currentAge;
-    },
-    aboutMeSpanArray() {
-      return [
-        "Hello there_",
-        "I am Timothy van der Veen",
-        `a ${this.getBirthYear} year old`,
-        "fullstack developer",
-        "from Groningen_",
-        "In the captivating",
-        "realm of web development",
-        "variables speak",
-        "louder than words_",
-        "Instead of writing a resume",
-        "full of half-truths",
-        "and exaggerated claims",
-        "I prefer to let",
-        "my skills do the talking_",
-      ];
-    },
-  },
-  watch: {
-    getActive(to) {
-      if (to.id === 1) {
-        this.text = "back again?";
-        this.updateText();
-      }
-    },
-  },
   methods: {
-    isMobile() {
-      if (
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        )
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    updateText() {
-      this.interval = 4000;
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.text = useContentStore().fontLoaded ? this.text : "Incorrect font";
-
-        let textArray = [] as string[];
-
-        this.interval = Math.random() * (10000 - 4000) + 4000;
-
-        if (Math.random() > 0.45 || this.textType === 1) {
-          this.textType = 0;
-          textArray = this.texts.welcome;
-        } else {
-          this.textType = 1;
-          textArray = this.texts.interactions;
-        }
-
-        const index = Math.round(Math.random() * (textArray.length - 1));
-        const newText = textArray[index];
-        this.text = newText;
-        this.updateText();
-      }, this.interval);
-    },
-  },
-  components: {
-    LayoutNavbar,
-    CustomCursor,
-    GlitchedText,
-    ContentPage,
+    ...mapActions(useContentStore, ["isMobile"]),
   },
 });
 </script>
@@ -384,27 +316,6 @@ export default defineComponent({
         background: unset !important;
       }
     }
-  }
-}
-
-.welcome-text__wrapper {
-  position: fixed;
-  overflow: hidden;
-  inset: 0;
-  top: $outsideBorder;
-  z-index: 0;
-  height: calc(50vh - 5vmin);
-  width: 100%;
-  pointer-events: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  .welcome-text {
-    opacity: 0.15;
-    font-size: 8vmin !important;
-    max-height: 8vmin !important;
-    overflow: visible !important;
   }
 }
 
