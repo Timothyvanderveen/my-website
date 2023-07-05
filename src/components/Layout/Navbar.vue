@@ -12,6 +12,7 @@
         }"
         @mouseleave="unhover()"
         @mouseenter="hover(navbarItem)"
+        @mousemove="hover(navbarItem)"
         @click="activate(navbarItem)"
       >
         <p
@@ -75,7 +76,7 @@ export default defineComponent({
       }
     },
     hover(navbarItem: NavbarItem) {
-      if (this.isScrolling) return;
+      if (this.isScrolling || navbarItem.hover) return;
       this.hoverNavbarItem(navbarItem);
     },
     unhover() {
