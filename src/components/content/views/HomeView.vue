@@ -79,8 +79,10 @@ onMounted(() => {
     top: 46.31vh;
   }
   #surname {
+    right: 0;
     z-index: 5;
     position: absolute;
+    translate: 0 1px;
   }
 }
 </style>
