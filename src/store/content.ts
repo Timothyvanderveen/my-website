@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { useScrollerStore } from "./scroller";
-import { Component } from "vue";
+import { Component, shallowRef } from "vue";
 
 // VIEWS
 import HomeView from "@/components/content/views/HomeView.vue";
@@ -38,7 +38,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#home",
         title: "Home",
-        view: HomeView,
+        view: shallowRef(HomeView),
       },
       {
         id: 2,
@@ -50,7 +50,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#about-me",
         title: "About Me",
-        view: AboutMeView,
+        view: shallowRef(AboutMeView),
       },
       {
         id: 3,
@@ -62,7 +62,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#my-stack",
         title: "My Stack",
-        view: StackView,
+        view: shallowRef(StackView),
       },
       {
         id: 4,
@@ -74,7 +74,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#my-projects",
         title: "My Projects",
-        view: ProjectView,
+        view: shallowRef(ProjectView),
       },
       {
         id: 5,
@@ -86,7 +86,7 @@ export const useContentStore = defineStore("content", {
         hover: false,
         hash: "#my-socials",
         title: "My Socials",
-        view: SocialView,
+        view: shallowRef(SocialView),
       },
     ],
   }),

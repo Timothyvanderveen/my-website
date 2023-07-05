@@ -1,5 +1,5 @@
 <template>
-  <WelcomeText />
+  <WelcomeText v-if="!isMobile()" />
   <div v-if="!isMobile()" id="content-container" class="content__container">
     <LayoutNavbar />
     <div class="content__wrapper">
@@ -12,7 +12,7 @@
     <CustomCursor />
   </div>
   <div v-if="isMobile()" class="mobile__placeholder">
-    <GlitchedText text="Mobile version coming soon" />
+    <p v-glitched="`Mobile version coming soon`" />
   </div>
 </template>
 
@@ -23,8 +23,10 @@ import GlitchedText from "./components/GlitchedText.vue";
 import { useContentStore } from "./store/content";
 import WelcomeText from "./components/content/WelcomeText.vue";
 import { onMounted, onBeforeMount } from "vue";
+import { useScrollerStore } from "./store/scroller";
 
 const { navbarItems, activateByHash, isMobile } = useContentStore();
+const { createListeners } = useScrollerStore();
 
 onBeforeMount(() => {
   document.fonts.ready.then(() => {
@@ -33,6 +35,7 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
+  createListeners();
   activateByHash(true, false);
 });
 </script>
@@ -66,7 +69,7 @@ onMounted(() => {
   align-content: center;
   width: 100%;
 
-  .glitched-text__wrapper {
+  p {
     white-space: normal;
     height: fit-content;
     max-height: unset;

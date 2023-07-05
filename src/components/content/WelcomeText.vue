@@ -1,13 +1,12 @@
 <template>
   <div class="welcome-text__wrapper">
-    <GlitchedText :text="text" class="welcome-text" />
+    <p v-glitched="text" class="welcome-text primary-font" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref, watch } from "vue";
 import { useContentStore } from "@/store/content";
-import GlitchedText from "../GlitchedText.vue";
 
 onMounted(() => {
   updateText();

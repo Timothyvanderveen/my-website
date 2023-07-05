@@ -3,7 +3,7 @@
     <template #full>
       <div class="stack-list padded-height">
         <div v-for="(stack, index) in stackArray" :key="index" class="stack">
-          <GlitchedText :text="stack" />
+          <p v-glitched="stack" />
         </div>
       </div>
     </template>

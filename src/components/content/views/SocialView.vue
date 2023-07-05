@@ -1,22 +1,17 @@
+div
 <template>
   <ContentPage :full="true" class="content-page__social">
     <template #full>
       <div class="social-list padded-height">
         <div v-for="(social, index) in socials" :key="index" class="social">
-          <GlitchedText
-            :text="socialHover === index ? `${social.text}>` : social.text"
+          <a
+            v-glitched="socialHover === index ? `${social.text}>` : social.text"
+            :target="social.href !== '' ? '_blank' : ''"
+            :href="`//${social.href}`"
+            class="primary-font"
             @mouseenter="socialHover = index"
             @mouseleave="socialHover = -1"
-          >
-            <template #default="slotProps">
-              <a
-                :target="social.href !== '' ? '_blank' : ''"
-                :href="`//${social.href}`"
-              >
-                {{ slotProps.text }}
-              </a>
-            </template>
-          </GlitchedText>
+          />
         </div>
       </div>
     </template>

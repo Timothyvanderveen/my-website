@@ -75,6 +75,7 @@ export const useScrollerStore = defineStore("scroller", {
       });
 
       useScrollerStore().scrollTo((id - 1) * innerHeight, smooth);
+      this.setTimer();
     },
     scrollTo(to: number, smooth = true) {
       const behaviour = smooth ? "smooth" : "instant";

@@ -71,33 +71,5 @@ defineProps({
     background-color: $white;
     padding-left: 30%;
   }
-
-  :deep() {
-    .content__page--lower {
-      p,
-      a {
-        text-align: right;
-        font-size: 2.5vw;
-      }
-
-      > * {
-        float: right;
-      }
-    }
-
-    .content__page--upper__header,
-    .content__page--lower__header {
-      position: absolute;
-      right: 0;
-    }
-
-    .content__page--upper__header {
-      bottom: 0;
-    }
-
-    .content__page--lower__header {
-      top: 0;
-    }
-  }
 }
 </style>

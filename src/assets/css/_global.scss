@@ -29,13 +29,16 @@ html {
     color: black;
   }
 
+  p, h1, a {
+    font-family: MajorMono;
+  }
+
   p {
     margin: 0;
     font-size: 20px;
   }
 
   h1 {
-    font-family: "MajorMono";
     font-size: 40px;
     white-space: nowrap;
     margin: 0;

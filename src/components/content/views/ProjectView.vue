@@ -3,36 +3,29 @@
     <template #full>
       <div class="project-list padded-height">
         <div v-for="(project, index) in projects" :key="index" class="project">
-          <GlitchedText
-            :text="
+          <a
+            v-glitched="
               projectHover === index
                 ? `${project.projectText}>`
                 : project.projectText
             "
+            class="primary-font"
+            target="_blank"
+            :href="`//${project.projectHref}`"
             @mouseenter="projectHover = index"
             @mouseleave="projectHover = -1"
-          >
-            <template #default="slotProps">
-              <a target="_blank" :href="`//${project.projectHref}`">
-                {{ slotProps.text }}
-              </a>
-            </template>
-          </GlitchedText>
+          />
 
-          <GlitchedText
-            :text="
+          <a
+            v-glitched="
               projectCompany === index ? `${project.company}>` : project.company
             "
             class="project-company"
+            target="_blank"
+            :href="`//${project.companyHref}`"
             @mouseenter="projectCompany = index"
             @mouseleave="projectCompany = -1"
-          >
-            <template #default="slotProps">
-              <a target="_blank" :href="`//${project.companyHref}`">
-                {{ slotProps.text }}
-              </a>
-            </template>
-          </GlitchedText>
+          />
         </div>
       </div>
     </template>
@@ -75,6 +68,7 @@ const projects = [
 
     * {
       text-align: right;
+      display: block;
     }
     .project-company {
       max-height: 2vw;

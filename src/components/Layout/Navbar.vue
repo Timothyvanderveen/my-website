@@ -1,22 +1,22 @@
 <template>
-  <div class="navbar" ref="navbar">
+  <div ref="navbar" class="navbar">
     <div class="navbar__menu">
       <div
+        v-for="(navbarItem, index) in navbarItems"
+        :key="index"
         class="navbar__item"
         :class="{
           active: navbarItem.active,
           hover: navbarItem.hover,
           clickable: !navbarItem.active,
         }"
-        v-for="(navbarItem, index) in navbarItems"
-        :key="index"
         @mouseleave="unhover()"
         @mouseenter="hover(navbarItem)"
         @click="activate(navbarItem)"
       >
-        <GlitchedText
-          class="navbar__item--link"
-          :text="getNavbarText(navbarItem)"
+        <p
+          v-glitched="getNavbarText(navbarItem)"
+          class="navbar__item--link primary-font"
         />
       </div>
     </div>
@@ -24,7 +24,6 @@
 </template>
 
 <script lang="ts">
-import GlitchedText from "@/components/GlitchedText.vue";
 import { NavbarItem, useContentStore } from "@/store/content";
 import { useScrollerStore } from "@/store/scroller";
 import { mapActions, mapState } from "pinia";
@@ -32,7 +31,6 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "LayoutNavbar",
-  components: { GlitchedText },
   computed: {
     ...mapState(useContentStore, [
       "navbarItems",
@@ -128,6 +126,7 @@ export default defineComponent({
       // height: $primary-font-size;
       pointer-events: none;
       font-size: 4vmin;
+      white-space: nowrap;
     }
 
     &.hidden {

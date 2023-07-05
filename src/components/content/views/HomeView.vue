@@ -1,18 +1,18 @@
 <template>
   <ContentPage :wide-hr="true" class="content-page__home">
     <template #upper>
-      <GlitchedText
+      <p
         id="firstname"
-        text="timothy"
+        v-glitched="'timothy'"
         class="content__page--upper__header primary-font"
       />
     </template>
 
     <template #lower>
-      <GlitchedText
+      <p
         id="surname"
         ref="surname"
-        text="van der Veen"
+        v-glitched="'van der Veen'"
         class="content__page--lower__header primary-font"
       />
     </template>
@@ -20,7 +20,6 @@
 </template>
 
 <script lang="ts" setup>
-import GlitchedText from "@/components/GlitchedText.vue";
 import ContentPage from "../ContentPage.vue";
 import { useScrollerStore } from "@/store/scroller";
 import { onMounted, ref } from "vue";
@@ -36,8 +35,7 @@ interface HomePageStyleObject {
 const scrollerStore = useScrollerStore();
 const contentStore = useContentStore();
 
-// const firtname = ref<HTMLInputElement | null>(null);
-const surname = ref<ComponentPublicInstance | null>(null);
+const surname = ref<HTMLElement | null>(null);
 
 onMounted(() => {
   scrollerStore.addScrollAction(() => {
@@ -66,11 +64,9 @@ onMounted(() => {
 
     (Object.keys(style) as Array<keyof typeof style>).forEach((key) => {
       if (!surname.value) return;
-      surname.value.$el.style[key] = style[key];
+      surname.value.style[key] = style[key];
     });
   });
-
-  useScrollerStore().createListeners();
 });
 </script>
 
