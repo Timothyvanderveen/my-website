@@ -1,0 +1,7 @@
+{
+  "name": "Afvalwijzer",
+  "short_name": "Afvalwijzer",
+  "start_url": "/offalkalinder",
+  "display": "standalone",
+  "gcm_sender_id": "<Your Sender ID Here>"
+}

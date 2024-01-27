@@ -4,7 +4,9 @@
       <slot name="upper" />
     </div>
 
-    <div class="hr-wrapper" :class="{ wide: wideHr }"><hr /></div>
+    <div :class="{ wide: wideHr }" class="hr-wrapper">
+      <hr />
+    </div>
     <div class="content__page--lower">
       <slot name="lower" />
     </div>
@@ -31,7 +33,7 @@ defineProps({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .content__page {
   height: $viewHeight;
   scroll-snap-align: start;
